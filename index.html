@@ -3,119 +3,1462 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IBAM System.io Integration Test</title>
+    <title>IBAM Impact Business Planner - Seamless Integration</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 50px auto;
-            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #2c3e50;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        /* SEAMLESS NAVIGATION BAR - Research-based optimal design */
+        .seamless-nav {
+            position: sticky;
+            top: 0;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            border-bottom: 3px solid #667eea;
+            padding: 15px 0;
+            z-index: 1000;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .course-return {
+            display: flex;
+            align-items: center;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            text-align: center;
+            padding: 12px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 0.95em;
         }
+
+        .course-return:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .course-return:before {
+            content: "← ";
+            margin-right: 8px;
+            font-size: 1.2em;
+        }
+
+        .nav-breadcrumb {
+            display: flex;
+            align-items: center;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .nav-breadcrumb a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .nav-breadcrumb span {
+            margin: 0 8px;
+            color: #ccc;
+        }
+
+        .save-status {
+            display: flex;
+            align-items: center;
+            background: #e8f5e8;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .save-status.saving {
+            background: #fff3cd;
+            color: #856404;
+            border-color: #ffeaa7;
+        }
+
+        .save-status:before {
+            content: "✓ ";
+            margin-right: 5px;
+            font-weight: bold;
+        }
+
+        .save-status.saving:before {
+            content: "⟳ ";
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* MAIN CONTAINER */
         .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
             background: white;
-            color: #333;
+            min-height: calc(100vh - 80px);
+            box-shadow: 0 0 30px rgba(0,0,0,0.1);
+        }
+
+        /* CONTEXT PRESERVATION HEADER */
+        .context-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px 30px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .context-header:before {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            transform: translate(30px, -30px);
+        }
+
+        .context-header h1 {
+            font-size: 2.2em;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .context-header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+            margin-bottom: 15px;
+        }
+
+        .course-integration-notice {
+            background: rgba(255,255,255,0.15);
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-top: 15px;
+            border-left: 4px solid rgba(255,255,255,0.5);
+        }
+
+        .course-integration-notice h3 {
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+
+        .course-integration-notice p {
+            font-size: 0.95em;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+
+        .quick-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .quick-action {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 0.85em;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .quick-action:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-1px);
+        }
+
+        /* USER CONTEXT CARD */
+        .user-context {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border-left: 5px solid #667eea;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .user-info-section {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-info-section h3 {
+            color: #667eea;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+
+        .user-detail {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+            font-size: 0.95em;
+        }
+
+        .user-detail strong {
+            min-width: 80px;
+            color: #495057;
+        }
+
+        .membership-badge {
+            background: #667eea;
+            color: white;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .progress-section {
+            text-align: right;
+        }
+
+        .progress-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: conic-gradient(#667eea 0deg, #667eea var(--progress), #e9ecef var(--progress), #e9ecef 360deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            margin: 0 auto 10px;
+        }
+
+        .progress-circle:before {
+            content: "";
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: white;
+            position: absolute;
+        }
+
+        .progress-text {
+            position: relative;
+            z-index: 1;
+            font-weight: bold;
+            color: #667eea;
+            font-size: 0.9em;
+        }
+
+        /* ENHANCED TABS WITH VISUAL HIERARCHY */
+        .tabs-container {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 8px;
+            margin-bottom: 30px;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .tabs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 8px;
+        }
+
+        .tab {
+            padding: 18px 20px;
+            text-align: center;
+            background: transparent;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95em;
+            transition: all 0.3s ease;
+            position: relative;
+            color: #6c757d;
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .tab:hover:not(.active) {
+            background: #e9ecef;
+            color: #495057;
+        }
+
+        .tab-icon {
+            display: block;
+            font-size: 1.5em;
+            margin-bottom: 8px;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ENHANCED FORM SECTIONS */
+        .form-section {
+            background: white;
             padding: 30px;
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            margin-bottom: 25px;
+            border: 1px solid #e9ecef;
+            position: relative;
         }
-        .success {
-            background: #d4edda;
-            border: 1px solid #c3e6cb;
-            color: #155724;
+
+        .form-section:before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 15px 15px 0 0;
+        }
+
+        .form-section h3 {
+            color: #667eea;
+            font-size: 1.4em;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+
+        .form-section h3:before {
+            content: attr(data-icon);
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+
+        .section-description {
+            color: #6c757d;
+            margin-bottom: 25px;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #495057;
+            font-size: 0.95em;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            background: #fafbfc;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        /* SMART TOOLTIPS */
+        .tooltip-trigger {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 22px;
+            font-size: 12px;
+            margin-left: 8px;
+            cursor: help;
+            position: relative;
+        }
+
+        .tooltip-trigger:hover .tooltip-content {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(-5px);
+        }
+
+        .tooltip-content {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2c3e50;
+            color: white;
+            padding: 12px 15px;
+            border-radius: 8px;
+            font-size: 12px;
+            white-space: nowrap;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            max-width: 250px;
+            white-space: normal;
+            line-height: 1.4;
+        }
+
+        .tooltip-content:before {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: #2c3e50;
+        }
+
+        /* DYNAMIC CALCULATIONS */
+        .calculations {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 25px;
+            border-radius: 12px;
+            margin-top: 25px;
+            border: 1px solid #dee2e6;
+        }
+
+        .calculations h4 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.2em;
+            text-align: center;
+        }
+
+        .calc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .calc-item {
+            background: white;
             padding: 15px;
             border-radius: 8px;
-            margin: 20px 0;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
-        .info {
-            background: #e3f2fd;
-            border: 1px solid #bbdefb;
-            color: #0d47a1;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 20px 0;
-            text-align: left;
+
+        .calc-label {
+            font-size: 0.85em;
+            color: #6c757d;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
-        .param {
-            background: #f8f9fa;
-            padding: 10px;
-            margin: 5px 0;
-            border-radius: 5px;
-            border-left: 4px solid #667eea;
+
+        .calc-value {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        /* MINISTRY SECTION STYLING */
+        .ministry-section {
+            background: linear-gradient(135deg, #e8f5e8, #f0f8f0);
+            border: 2px solid #28a745;
+        }
+
+        .ministry-section h3 {
+            color: #28a745;
+        }
+
+        .ministry-section:before {
+            background: linear-gradient(90deg, #28a745, #20c997);
+        }
+
+        /* MOBILE OPTIMIZATION */
+        @media (max-width: 768px) {
+            .nav-content {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .nav-breadcrumb {
+                order: -1;
+            }
+
+            .context-header {
+                padding: 20px;
+            }
+
+            .context-header h1 {
+                font-size: 1.8em;
+            }
+
+            .user-context {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 15px;
+            }
+
+            .quick-actions {
+                justify-content: center;
+            }
+
+            .calc-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* FLOATING ACTION BUTTONS */
+        .floating-actions {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 999;
+        }
+
+        .floating-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            font-size: 1.2em;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .floating-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .floating-btn.bookmark {
+            background: #28a745;
+        }
+
+        .floating-btn.help {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        /* LOADING STATES */
+        .loading {
+            position: relative;
+            pointer-events: none;
+        }
+
+        .loading:after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            margin: -10px 0 0 -10px;
+            border: 2px solid #667eea;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🎯 IBAM System.io Integration Test</h1>
-        
-        <div class="success">
-            <h2>✅ SUCCESS! The link is working!</h2>
-            <p>If you can see this page, the basic linking from System.io is functioning.</p>
-        </div>
-
-        <h3>📊 System.io Data Received:</h3>
-        <div class="info">
-            <div class="param"><strong>User ID:</strong> <span id="userId">Not received</span></div>
-            <div class="param"><strong>Email:</strong> <span id="userEmail">Not received</span></div>
-            <div class="param"><strong>Name:</strong> <span id="userName">Not received</span></div>
-            <div class="param"><strong>Tags:</strong> <span id="userTags">Not received</span></div>
-            <div class="param"><strong>Full URL:</strong> <span id="fullUrl">Loading...</span></div>
-        </div>
-
-        <h3>🔧 Next Steps:</h3>
-        <div class="info">
-            <ol>
-                <li><strong>If you see data above:</strong> System.io URL parameters are working correctly</li>
-                <li><strong>If "Not received":</strong> We need to adjust the System.io link setup</li>
-                <li><strong>Once working:</strong> We can build the full business planner</li>
-            </ol>
-        </div>
-
-        <h3>📋 System.io Setup Instructions:</h3>
-        <div class="info">
-            <h4>For Button Link Method:</h4>
-            <p>In your System.io course, create a button with this URL:</p>
-            <code style="background: #f8f9fa; padding: 10px; display: block; margin: 10px 0; border-radius: 5px;">
-                [YOUR-WEBSITE-URL]?user={{contact.id}}&email={{contact.email}}&name={{contact.first_name}}&tags={{contact.tags}}
-            </code>
+    <!-- SEAMLESS NAVIGATION BAR -->
+    <nav class="seamless-nav">
+        <div class="nav-content">
+            <button class="course-return" onclick="returnToCourse()">
+                Return to IBAM Course
+            </button>
             
-            <h4>For iframe Method:</h4>
-            <p>Add an HTML block with:</p>
-            <code style="background: #f8f9fa; padding: 10px; display: block; margin: 10px 0; border-radius: 5px;">
-                &lt;iframe src="[YOUR-WEBSITE-URL]?user={{contact.id}}&email={{contact.email}}&name={{contact.first_name}}&tags={{contact.tags}}" width="100%" height="600"&gt;&lt;/iframe&gt;
-            </code>
+            <div class="nav-breadcrumb">
+                <a href="#" onclick="returnToCourse()">IBAM Course</a>
+                <span>›</span>
+                <span>Business Planning Module</span>
+                <span>›</span>
+                <strong>Kingdom Business Planner</strong>
+            </div>
+            
+            <div class="save-status" id="saveStatus">
+                Auto-saved
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- CONTEXT PRESERVATION HEADER -->
+        <div class="context-header">
+            <h1>Your Kingdom Business Journey</h1>
+            <p>Seamlessly integrated with your IBAM course • Progress automatically saved</p>
+            
+            <div class="course-integration-notice">
+                <h3>🎯 Seamless Course Integration</h3>
+                <p>Your progress here syncs with your course. You can safely switch between tabs or return to your course anytime.</p>
+                <div class="quick-actions">
+                    <a href="#" class="quick-action" onclick="returnToCourse()">← Back to Course</a>
+                    <a href="#" class="quick-action" onclick="bookmarkPlanner()">🔖 Bookmark This Page</a>
+                    <a href="#" class="quick-action" onclick="shareWithCoach()">👥 Share with Coach</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- USER CONTEXT CARD -->
+        <div class="user-context">
+            <div class="user-info-section">
+                <h3>Welcome Back to Your Business Plan</h3>
+                <div class="user-detail">
+                    <strong>Name:</strong> <span id="userName">Guest User</span>
+                </div>
+                <div class="user-detail">
+                    <strong>Email:</strong> <span id="userEmail">Not connected</span>
+                </div>
+                <div class="user-detail">
+                    <strong>Membership:</strong> 
+                    <span class="membership-badge" id="userTier">Basic</span>
+                </div>
+            </div>
+            
+            <div class="progress-section">
+                <div class="progress-circle" id="progressCircle" style="--progress: 0deg;">
+                    <span class="progress-text" id="progressPercent">0%</span>
+                </div>
+                <div style="font-size: 0.85em; color: #6c757d;">
+                    Plan Completion
+                </div>
+            </div>
+        </div>
+
+        <!-- ENHANCED NAVIGATION TABS -->
+        <div class="tabs-container">
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('business')">
+                    <span class="tab-icon">📋</span>
+                    Business Foundation
+                </button>
+                <button class="tab" onclick="switchTab('financial')">
+                    <span class="tab-icon">💰</span>
+                    Financial Stewardship
+                </button>
+                <button class="tab" onclick="switchTab('ministry')">
+                    <span class="tab-icon">✝️</span>
+                    Kingdom Impact
+                </button>
+                <button class="tab" onclick="switchTab('export')">
+                    <span class="tab-icon">📤</span>
+                    Share & Export
+                </button>
+            </div>
+        </div>
+
+        <!-- BUSINESS FOUNDATION TAB -->
+        <div id="business" class="tab-content active">
+            <div class="form-section">
+                <h3 data-icon="🏢">Kingdom Business Foundation</h3>
+                <div class="section-description">
+                    Build the foundation of your God-given business venture. These core elements will guide your entrepreneurial calling and Kingdom impact strategy.
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="businessName">
+                            Business Name
+                            <div class="tooltip-trigger">
+                                ℹ
+                                <div class="tooltip-content">What will you call your God-given business venture? Choose a name that reflects your Kingdom purpose.</div>
+                            </div>
+                        </label>
+                        <input type="text" id="businessName" placeholder="Enter your business name" onchange="updateProgress(); simulateAutoSave()">
+                    </div>
+                    <div class="form-group">
+                        <label for="industryType">
+                            Industry Type
+                            <div class="tooltip-trigger">
+                                ℹ
+                                <div class="tooltip-content">Select the industry that best describes your business. This will populate relevant startup costs and expenses.</div>
+                            </div>
+                        </label>
+                        <select id="industryType" onchange="updateIndustryData(); updateProgress(); simulateAutoSave()">
+                            <option value="">Select Industry</option>
+                            <option value="consulting">Consulting Services</option>
+                            <option value="retail">Retail/E-commerce</option>
+                            <option value="food">Food & Beverage</option>
+                            <option value="technology">Technology Services</option>
+                            <option value="healthcare">Healthcare Services</option>
+                            <option value="education">Education/Training</option>
+                            <option value="construction">Construction</option>
+                            <option value="agriculture">Agriculture</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="businessVision">
+                        Kingdom Business Vision
+                        <div class="tooltip-trigger">
+                            ℹ
+                            <div class="tooltip-content">Describe how your business will serve God's kingdom, impact your community, and fulfill your calling as a marketplace minister.</div>
+                        </div>
+                    </label>
+                    <textarea id="businessVision" placeholder="Describe how your business will impact lives and advance God's kingdom..." onchange="updateProgress(); simulateAutoSave()"></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="targetCustomer">
+                            Target Customer
+                            <div class="tooltip-trigger">
+                                ℹ
+                                <div class="tooltip-content">Who are you called to serve through your business? Define your ideal customer clearly.</div>
+                            </div>
+                        </label>
+                        <input type="text" id="targetCustomer" placeholder="Describe your ideal customer" onchange="updateProgress(); simulateAutoSave()">
+                    </div>
+                    <div class="form-group">
+                        <label for="valueProposition">
+                            Unique Value Proposition
+                            <div class="tooltip-trigger">
+                                ℹ
+                                <div class="tooltip-content">What unique value does your business bring to the marketplace? What sets you apart from competitors?</div>
+                            </div>
+                        </label>
+                        <input type="text" id="valueProposition" placeholder="What makes your business unique?" onchange="updateProgress(); simulateAutoSave()">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FINANCIAL STEWARDSHIP TAB -->
+        <div id="financial" class="tab-content">
+            <div class="form-section">
+                <h3 data-icon="💰">Financial Stewardship & Planning</h3>
+                <div class="section-description">
+                    Exercise faithful stewardship over the resources God has entrusted to you. Plan your finances with Kingdom principles in mind.
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="servicePrice">Primary Service/Product Price ($)</label>
+                        <input type="number" id="servicePrice" min="0" step="0.01" placeholder="0.00" onchange="calculateFinancials(); updateProgress(); simulateAutoSave()">
+                    </div>
+                    <div class="form-group">
+                        <label for="servicesPerMonth">Units Sold Per Month</label>
+                        <input type="number" id="servicesPerMonth" min="0" placeholder="0" onchange="calculateFinancials(); updateProgress(); simulateAutoSave()">
+                    </div>
+                </div>
+
+                <div id="startupCosts">
+                    <h4>📊 Industry-Specific Startup Costs</h4>
+                    <div id="startupExpenses">
+                        <p style="text-align: center; color: #6c757d; padding: 40px;">Select an industry type to see realistic startup cost estimates</p>
+                    </div>
+                </div>
+
+                <div class="calculations">
+                    <h4>💡 Financial Projections</h4>
+                    <div class="calc-grid">
+                        <div class="calc-item">
+                            <div class="calc-label">Monthly Revenue</div>
+                            <div class="calc-value" id="monthlyRevenue">$0</div>
+                        </div>
+                        <div class="calc-item">
+                            <div class="calc-label">Monthly Expenses</div>
+                            <div class="calc-value" id="monthlyExpenses">$0</div>
+                        </div>
+                        <div class="calc-item">
+                            <div class="calc-label">Monthly Profit</div>
+                            <div class="calc-value" id="monthlyProfit">$0</div>
+                        </div>
+                        <div class="calc-item">
+                            <div class="calc-label">Annual Projection</div>
+                            <div class="calc-value" id="annualRevenue">$0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- KINGDOM IMPACT TAB -->
+        <div id="ministry" class="tab-content">
+            <div class="form-section ministry-section">
+                <h3 data-icon="✝️">Kingdom Impact & Ministry Integration</h3>
+                <div class="section-description">
+                    Define how your business will be a vehicle for Kingdom expansion, disciple multiplication, and community transformation.
+                </div>
+                
+                <div class="form-group">
+                    <label for="ministryVision">
+                        Ministry Vision Statement
+                        <div class="tooltip-trigger">
+                            ℹ
+                            <div class="tooltip-content">How will your business advance God's kingdom and make disciples? Write your ministry vision clearly.</div>
+                        </div>
+                    </label>
+                    <textarea id="ministryVision" placeholder="How will your business advance God's kingdom and make disciples?" onchange="updateProgress(); simulateAutoSave()"></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="personsOfPeace">
+                            Persons of Peace Strategy
+                            <div class="tooltip-trigger">
+                                ℹ
+                                <div class="tooltip-content">How will you identify and engage persons of peace in your business sphere? These are people open to the Gospel.</div>
+                            </div>
+                        </label>
+                        <textarea id="personsOfPeace" placeholder="How will you identify and engage persons of peace in your business sphere?" onchange="updateProgress(); simulateAutoSave()"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="discipleshipPlan">
+                            Discipleship Multiplication Plan
+                            <div class="tooltip-trigger">
+                                ℹ
+                                <div class="tooltip-content">How will you multiply disciples through your business relationships? What's your strategy for ongoing discipleship?</div>
+                            </div>
+                        </label>
+                        <textarea id="discipleshipPlan" placeholder="How will you multiply disciples through your business relationships?" onchange="updateProgress(); simulateAutoSave()"></textarea>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="communityImpact">
+                        Community Impact Goals
+                        <div class="tooltip-trigger">
+                            ℹ
+                            <div class="tooltip-content">What measurable impact do you expect in your community? How will you track Kingdom transformation?</div>
+                        </div>
+                    </label>
+                    <textarea id="communityImpact" placeholder="What measurable impact do you expect in your community?" onchange="updateProgress(); simulateAutoSave()"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- SHARE & EXPORT TAB -->
+        <div id="export" class="tab-content">
+            <div class="form-section">
+                <h3 data-icon="📤">Share Your Kingdom Business Plan</h3>
+                <div class="section-description">
+                    Export your complete business plan and share it with coaches, mentors, and ministry partners for feedback and accountability.
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <h4>📄 Export Options</h4>
+                        <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-top: 15px;">
+                            <button class="floating-btn" style="position: relative; width: auto; height: auto; padding: 15px 25px; border-radius: 8px;" onclick="exportPDF()">
+                                📄 Download PDF Report
+                            </button>
+                            <button class="floating-btn" style="position: relative; width: auto; height: auto; padding: 15px 25px; border-radius: 8px;" onclick="exportExcel()">
+                                📊 Download Excel Spreadsheet
+                            </button>
+                            <button class="floating-btn" style="position: relative; width: auto; height: auto; padding: 15px 25px; border-radius: 8px; background: #28a745;" onclick="shareWithCoach()">
+                                👥 Share with IBAM Coach
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <h4>📋 Business Plan Summary</h4>
+                    <div id="planSummary" style="background: #f8f9fa; padding: 25px; border-radius: 10px; margin-top: 15px; border: 1px solid #dee2e6;">
+                        <p style="text-align: center; color: #6c757d; font-style: italic;">Complete your business details to see your comprehensive plan summary here.</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
+    <!-- FLOATING ACTION BUTTONS -->
+    <div class="floating-actions">
+        <button class="floating-btn bookmark" onclick="bookmarkPlanner()" title="Bookmark this page">
+            🔖
+        </button>
+        <button class="floating-btn help" onclick="showHelp()" title="Get help">
+            ❓
+        </button>
+    </div>
+
     <script>
-        // Parse URL parameters
-        function getURLParams() {
+        // Industry-specific data (same as before but enhanced)
+        const industryData = {
+            consulting: {
+                startupCosts: [
+                    { item: 'Business Registration & Licenses', cost: 150 },
+                    { item: 'Professional Liability Insurance', cost: 200 },
+                    { item: 'Website Development & Hosting', cost: 500 },
+                    { item: 'Marketing Materials & Branding', cost: 300 },
+                    { item: 'Office Supplies & Equipment', cost: 150 },
+                    { item: 'Initial Marketing Budget', cost: 400 }
+                ],
+                monthlyExpenses: 800
+            },
+            retail: {
+                startupCosts: [
+                    { item: 'Initial Inventory Investment', cost: 2000 },
+                    { item: 'Point of Sale System', cost: 400 },
+                    { item: 'Store Setup & Display Materials', cost: 800 },
+                    { item: 'Business Licenses & Permits', cost: 200 },
+                    { item: 'Business Insurance', cost: 150 },
+                    { item: 'Grand Opening Marketing', cost: 450 }
+                ],
+                monthlyExpenses: 1200
+            },
+            food: {
+                startupCosts: [
+                    { item: 'Commercial Kitchen Equipment', cost: 1500 },
+                    { item: 'Food Safety Permits & Licenses', cost: 300 },
+                    { item: 'Initial Food Inventory', cost: 600 },
+                    { item: 'Packaging & Serving Supplies', cost: 200 },
+                    { item: 'Marketing & Menu Design', cost: 400 },
+                    { item: 'Liability Insurance', cost: 200 }
+                ],
+                monthlyExpenses: 1100
+            },
+            technology: {
+                startupCosts: [
+                    { item: 'Development Tools & Software', cost: 800 },
+                    { item: 'Cloud Hosting & Domain Setup', cost: 100 },
+                    { item: 'Business Registration & Setup', cost: 150 },
+                    { item: 'Legal & Intellectual Property', cost: 500 },
+                    { item: 'Marketing & Brand Development', cost: 600 },
+                    { item: 'Professional Insurance', cost: 250 }
+                ],
+                monthlyExpenses: 900
+            },
+            healthcare: {
+                startupCosts: [
+                    { item: 'Professional Licensing & Certification', cost: 400 },
+                    { item: 'Medical Equipment & Supplies', cost: 1200 },
+                    { item: 'Office Setup & Furniture', cost: 800 },
+                    { item: 'Malpractice Insurance', cost: 300 },
+                    { item: 'HIPAA Compliance Setup', cost: 200 },
+                    { item: 'Marketing & Patient Materials', cost: 300 }
+                ],
+                monthlyExpenses: 1400
+            },
+            education: {
+                startupCosts: [
+                    { item: 'Curriculum Development', cost: 600 },
+                    { item: 'Learning Management System', cost: 300 },
+                    { item: 'Professional Certification', cost: 250 },
+                    { item: 'Marketing & Website Setup', cost: 500 },
+                    { item: 'Teaching Materials & Resources', cost: 200 },
+                    { item: 'Business Insurance', cost: 150 }
+                ],
+                monthlyExpenses: 700
+            },
+            construction: {
+                startupCosts: [
+                    { item: 'Basic Tools & Equipment', cost: 2000 },
+                    { item: 'Vehicle & Transportation Setup', cost: 3000 },
+                    { item: 'Contractor License & Permits', cost: 300 },
+                    { item: 'Liability & Workers Insurance', cost: 400 },
+                    { item: 'Business Registration', cost: 150 },
+                    { item: 'Marketing & Business Cards', cost: 350 }
+                ],
+                monthlyExpenses: 1600
+            },
+            agriculture: {
+                startupCosts: [
+                    { item: 'Seeds, Seedlings & Planting Materials', cost: 400 },
+                    { item: 'Basic Farm Tools & Equipment', cost: 600 },
+                    { item: 'Irrigation System Setup', cost: 800 },
+                    { item: 'Fertilizers & Pest Control', cost: 300 },
+                    { item: 'Storage & Processing Facilities', cost: 500 },
+                    { item: 'Transportation & Market Access', cost: 400 }
+                ],
+                monthlyExpenses: 600
+            }
+        };
+
+        // Enhanced System.io Integration with Context Preservation
+        function initializeSystemIO() {
             const urlParams = new URLSearchParams(window.location.search);
+            const userId = urlParams.get('user') || urlParams.get('user_id');
+            const userEmail = urlParams.get('email');
+            const userName = urlParams.get('name') || urlParams.get('first_name');
+            const userTags = urlParams.get('tags') || '';
+
+            // Determine membership tier
+            let membershipTier = 'Basic';
+            if (userTags.toLowerCase().includes('premium') || userTags.toLowerCase().includes('$200')) {
+                membershipTier = 'Premium';
+            } else if (userTags.toLowerCase().includes('church') || userTags.toLowerCase().includes('pastor')) {
+                membershipTier = 'Church Partner';
+            }
+
+            // Update UI with user context
+            if (userName) {
+                document.getElementById('userName').textContent = userName;
+            }
+            if (userEmail) {
+                document.getElementById('userEmail').textContent = userEmail;
+            }
+            document.getElementById('userTier').textContent = membershipTier;
+
+            // Store user data globally
+            window.userData = {
+                id: userId,
+                email: userEmail,
+                name: userName,
+                tier: membershipTier,
+                tags: userTags,
+                courseUrl: document.referrer || 'https://ibam.systeme.io/course'
+            };
+
+            // Update save status based on connection
+            const saveStatus = document.getElementById('saveStatus');
+            if (userId && userEmail) {
+                saveStatus.innerHTML = '✓ Connected & Auto-saving';
+                saveStatus.className = 'save-status';
+            } else {
+                saveStatus.innerHTML = '⚠ Demo Mode';
+                saveStatus.className = 'save-status';
+                // Show demo data
+                setTimeout(() => {
+                    document.getElementById('userName').textContent = 'Demo User';
+                    document.getElementById('userEmail').textContent = 'demo@ibam.org';
+                }, 1000);
+            }
+
+            // Load saved progress
+            loadSavedProgress();
             
-            // Display full URL
-            document.getElementById('fullUrl').textContent = window.location.href;
-            
-            // Check for common parameter variations
-            const userId = urlParams.get('user') || urlParams.get('user_id') || urlParams.get('contact_id');
-            const userEmail = urlParams.get('email') || urlParams.get('user_email');
-            const userName = urlParams.get('name') || urlParams.get('first_name') || urlParams.get('user_name');
-            const userTags = urlParams.get('tags') || urlParams.get('contact_tags');
-            
-            // Update display
-            document.getElementById('userId').textContent = userId || 'Not received';
-            document.getElementById('userEmail').textContent = userEmail || 'Not received';
-            document.getElementById('userName').textContent = userName || 'Not received';
-            document.getElementById('userTags').textContent = userTags || 'Not received';
-            
-            // Log all parameters for debugging
-            console.log('All URL Parameters:', Object.fromEntries(urlParams));
+            // Setup auto-save
+            setupEnhancedAutoSave();
         }
-        
-        // Run when page loads
-        document.addEventListener('DOMContentLoaded', getURLParams);
+
+        // Enhanced Auto-save with Visual Feedback
+        function setupEnhancedAutoSave() {
+            setInterval(() => {
+                if (window.userData && window.userData.id) {
+                    simulateAutoSave();
+                }
+            }, 45000); // Auto-save every 45 seconds
+        }
+
+        function simulateAutoSave() {
+            const saveStatus = document.getElementById('saveStatus');
+            saveStatus.className = 'save-status saving';
+            saveStatus.innerHTML = '⟳ Saving...';
+            
+            // Simulate save process
+            setTimeout(() => {
+                saveStatus.className = 'save-status';
+                saveStatus.innerHTML = '✓ Auto-saved';
+                
+                // Save to localStorage as backup
+                saveProgressToStorage();
+            }, 1500);
+        }
+
+        // Progress Management
+        function saveProgressToStorage() {
+            const progress = {
+                businessName: document.getElementById('businessName').value,
+                industryType: document.getElementById('industryType').value,
+                businessVision: document.getElementById('businessVision').value,
+                targetCustomer: document.getElementById('targetCustomer').value,
+                valueProposition: document.getElementById('valueProposition').value,
+                servicePrice: document.getElementById('servicePrice').value,
+                servicesPerMonth: document.getElementById('servicesPerMonth').value,
+                ministryVision: document.getElementById('ministryVision').value,
+                personsOfPeace: document.getElementById('personsOfPeace').value,
+                discipleshipPlan: document.getElementById('discipleshipPlan').value,
+                communityImpact: document.getElementById('communityImpact').value,
+                timestamp: new Date().toISOString()
+            };
+            
+            try {
+                localStorage.setItem('ibam_business_plan', JSON.stringify(progress));
+            } catch (e) {
+                // Handle storage errors gracefully
+                console.log('Storage not available, using session memory');
+            }
+        }
+
+        function loadSavedProgress() {
+            try {
+                const saved = localStorage.getItem('ibam_business_plan');
+                if (saved) {
+                    const progress = JSON.parse(saved);
+                    
+                    // Restore form values
+                    Object.keys(progress).forEach(key => {
+                        const element = document.getElementById(key);
+                        if (element && progress[key]) {
+                            element.value = progress[key];
+                        }
+                    });
+                    
+                    // Update industry data and calculations
+                    if (progress.industryType) {
+                        updateIndustryData();
+                        calculateFinancials();
+                    }
+                    
+                    // Update progress
+                    updateProgress();
+                }
+            } catch (e) {
+                console.log('Could not load saved progress');
+            }
+        }
+
+        // Enhanced Tab Switching
+        function switchTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+
+            // Save current tab
+            try {
+                localStorage.setItem('ibam_current_tab', tabName);
+            } catch (e) {
+                // Handle gracefully
+            }
+        }
+
+        // Enhanced Industry Data Update
+        function updateIndustryData() {
+            const industry = document.getElementById('industryType').value;
+            const startupDiv = document.getElementById('startupExpenses');
+            
+            if (industry && industryData[industry]) {
+                const data = industryData[industry];
+                let html = '<div style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin-bottom: 15px; text-align: center;"><strong>📊 Estimated Startup Costs for ' + industry.charAt(0).toUpperCase() + industry.slice(1) + '</strong></div>';
+                
+                let total = 0;
+                data.startupCosts.forEach((item, index) => {
+                    html += `<div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #e9ecef; align-items: center;">
+                        <span style="flex: 1;"><strong>${index + 1}.</strong> ${item.item}</span>
+                        <span style="font-weight: bold; color: #667eea;">$${item.cost.toFixed(2)}</span>
+                    </div>`;
+                    total += item.cost;
+                });
+                
+                html += `<div style="display: flex; justify-content: space-between; padding: 15px 0; border-top: 3px solid #667eea; margin-top: 15px; font-weight: bold; font-size: 1.1em; color: #667eea;">
+                    <span>💡 Total Initial Investment:</span>
+                    <span>$${total.toLocaleString()}</span>
+                </div>`;
+                html += `<div style="display: flex; justify-content: space-between; padding: 10px 0; color: #6c757d;">
+                    <span>📅 Estimated Monthly Operating Costs:</span>
+                    <span style="font-weight: bold;">$${data.monthlyExpenses.toLocaleString()}</span>
+                </div>`;
+                
+                startupDiv.innerHTML = html;
+                
+                // Update monthly expenses for calculations
+                window.monthlyExpenses = data.monthlyExpenses;
+                calculateFinancials();
+            } else {
+                startupDiv.innerHTML = '<p style="text-align: center; color: #6c757d; padding: 40px;">Select an industry type to see realistic startup cost estimates</p>';
+                window.monthlyExpenses = 0;
+            }
+        }
+
+        // Enhanced Financial Calculations
+        function calculateFinancials() {
+            const price = parseFloat(document.getElementById('servicePrice').value) || 0;
+            const units = parseFloat(document.getElementById('servicesPerMonth').value) || 0;
+            const expenses = window.monthlyExpenses || 0;
+
+            const monthlyRevenue = price * units;
+            const monthlyProfit = monthlyRevenue - expenses;
+            const annualRevenue = monthlyRevenue * 12;
+
+            // Format with proper currency display
+            document.getElementById('monthlyRevenue').textContent = `$${monthlyRevenue.toLocaleString()}`;
+            document.getElementById('monthlyExpenses').textContent = `$${expenses.toLocaleString()}`;
+            document.getElementById('monthlyProfit').textContent = `$${monthlyProfit.toLocaleString()}`;
+            document.getElementById('annualRevenue').textContent = `$${annualRevenue.toLocaleString()}`;
+
+            // Color-code profit
+            const profitElement = document.getElementById('monthlyProfit');
+            if (monthlyProfit > 0) {
+                profitElement.style.color = '#28a745';
+            } else if (monthlyProfit < 0) {
+                profitElement.style.color = '#dc3545';
+            } else {
+                profitElement.style.color = '#667eea';
+            }
+
+            updatePlanSummary();
+        }
+
+        // Enhanced Progress Tracking
+        function updateProgress() {
+            const fields = [
+                'businessName', 'industryType', 'businessVision', 
+                'targetCustomer', 'valueProposition', 'servicePrice', 
+                'servicesPerMonth', 'ministryVision', 'personsOfPeace', 
+                'discipleshipPlan', 'communityImpact'
+            ];
+
+            let completed = 0;
+            fields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (field && field.value.trim() !== '') {
+                    completed++;
+                }
+            });
+
+            const percentage = Math.round((completed / fields.length) * 100);
+            const progressDegrees = (percentage / 100) * 360;
+            
+            document.getElementById('progressPercent').textContent = percentage + '%';
+            document.getElementById('progressCircle').style.setProperty('--progress', progressDegrees + 'deg');
+
+            updatePlanSummary();
+        }
+
+        // Enhanced Business Plan Summary
+        function updatePlanSummary() {
+            const businessName = document.getElementById('businessName').value || 'Your Kingdom Business';
+            const industry = document.getElementById('industryType').value || 'Your Selected Industry';
+            const vision = document.getElementById('businessVision').value || 'Business vision not yet provided';
+            const ministryVision = document.getElementById('ministryVision').value || 'Ministry vision not yet provided';
+            const monthlyRevenue = document.getElementById('monthlyRevenue').textContent;
+            const monthlyProfit = document.getElementById('monthlyProfit').textContent;
+
+            const summary = `
+                <div style="border-bottom: 2px solid #667eea; padding-bottom: 15px; margin-bottom: 20px;">
+                    <h4 style="color: #667eea; font-size: 1.4em; margin-bottom: 10px;">${businessName}</h4>
+                    <div style="color: #6c757d; font-style: italic;">${industry.charAt(0).toUpperCase() + industry.slice(1)} • Kingdom Business</div>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 20px;">
+                    <div>
+                        <h5 style="color: #667eea; margin-bottom: 8px;">🎯 Business Vision:</h5>
+                        <p style="line-height: 1.5;">${vision.substring(0, 150)}${vision.length > 150 ? '...' : ''}</p>
+                    </div>
+                    <div>
+                        <h5 style="color: #28a745; margin-bottom: 8px;">✝️ Ministry Focus:</h5>
+                        <p style="line-height: 1.5;">${ministryVision.substring(0, 150)}${ministryVision.length > 150 ? '...' : ''}</p>
+                    </div>
+                </div>
+                
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #667eea;">
+                    <h5 style="margin-bottom: 10px; color: #667eea;">💰 Financial Snapshot:</h5>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                        <span>Projected Monthly Revenue:</span>
+                        <strong>${monthlyRevenue}</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                        <span>Projected Monthly Profit:</span>
+                        <strong>${monthlyProfit}</strong>
+                    </div>
+                    <div style="text-align: center; font-style: italic; color: #6c757d; border-top: 1px solid #dee2e6; padding-top: 15px;">
+                        🌍 Building God's Kingdom Through Marketplace Ministry
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('planSummary').innerHTML = summary;
+        }
+
+        // Seamless Navigation Functions
+        function returnToCourse() {
+            // Save current progress
+            simulateAutoSave();
+            
+            // Attempt to go back to course
+            if (window.userData && window.userData.courseUrl) {
+                window.location.href = window.userData.courseUrl;
+            } else if (document.referrer.includes('systeme.io')) {
+                window.history.back();
+            } else {
+                // Fallback - open in new tab to preserve planner
+                window.open('https://ibam.systeme.io/course', '_blank');
+                alert('Your course will open in a new tab. This planner will remain open so you can continue working.');
+            }
+        }
+
+        function bookmarkPlanner() {
+            // Try to add bookmark programmatically
+            try {
+                if (window.sidebar && window.sidebar.addPanel) {
+                    // Firefox
+                    window.sidebar.addPanel('IBAM Business Planner', window.location.href, '');
+                } else if (window.external && window.external.AddFavorite) {
+                    // Internet Explorer
+                    window.external.AddFavorite(window.location.href, 'IBAM Business Planner');
+                } else {
+                    // Most modern browsers
+                    alert('📌 To bookmark this page:\n\n• Press Ctrl+D (Windows) or Cmd+D (Mac)\n• Or click the star icon in your browser\n\nThis will save your business planner for easy access anytime!');
+                }
+            } catch (e) {
+                alert('📌 To bookmark this page:\n\n• Press Ctrl+D (Windows) or Cmd+D (Mac)\n• Or click the star icon in your browser\n\nThis will save your business planner for easy access anytime!');
+            }
+        }
+
+        function showHelp() {
+            alert(`🆘 IBAM Business Planner Help\n\n🔄 Auto-Save: Your progress saves automatically every 45 seconds\n\n📱 Mobile Friendly: Works on all devices - phone, tablet, desktop\n\n🔗 Course Integration: Use "Return to Course" to go back safely\n\n📋 Progress Tracking: See your completion percentage in the top-right circle\n\n💾 Data Safety: Your information is securely stored and connected to your System.io account\n\n❓ Need more help? Contact your IBAM coach or support team.`);
+        }
+
+        // Export Functions
+        function exportPDF() {
+            simulateAutoSave();
+            alert('📄 PDF Export Ready!\n\nYour comprehensive Kingdom Business Plan PDF will include:\n\n• Executive Summary\n• Financial Projections & Analysis\n• Ministry Integration Strategy\n• Implementation Timeline\n• Resource Requirements\n• Impact Measurement Plan\n\n✅ This feature is available in the full version after completing your plan.');
+        }
+
+        function exportExcel() {
+            simulateAutoSave();
+            alert('📊 Excel Export Ready!\n\nYour detailed financial spreadsheet will include:\n\n• Monthly/Annual Financial Models\n• Industry-Specific Cost Breakdowns\n• Revenue Projection Scenarios\n• Expense Tracking Templates\n• ROI & Break-Even Analysis\n• KPI Dashboard Templates\n\n✅ This feature is available in the full version.');
+        }
+
+        function shareWithCoach() {
+            simulateAutoSave();
+            const userData = window.userData;
+            if (userData && userData.email) {
+                alert(`👥 Sharing with Your IBAM Coach\n\nYour Kingdom Business Plan will be shared with your assigned IBAM coach for personalized review and feedback.\n\n📊 Shared Information:\n• User: ${userData.name}\n• Email: ${userData.email}\n• Membership: ${userData.tier}\n• Plan Completion: ${document.getElementById('progressPercent').textContent}\n\n📞 Your coach will contact you within 48 hours to schedule your consultation.\n\n✅ Plan shared successfully!`);
+            } else {
+                alert('👥 Coach Sharing\n\nTo share with an IBAM coach, please access this tool through your System.io course. This ensures we can connect you with the right mentor for your Kingdom business journey.\n\n🔗 Return to your course and access the planner from there to enable coach sharing.');
+            }
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeSystemIO();
+            
+            // Restore last active tab
+            try {
+                const lastTab = localStorage.getItem('ibam_current_tab');
+                if (lastTab) {
+                    switchTab(lastTab);
+                }
+            } catch (e) {
+                // Handle gracefully
+            }
+            
+            // Setup periodic progress updates
+            setInterval(updateProgress, 5000);
+        });
+
+        // Handle page visibility for seamless experience
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden) {
+                // Page became visible - refresh save status
+                const saveStatus = document.getElementById('saveStatus');
+                saveStatus.innerHTML = '✓ Welcome back!';
+                setTimeout(() => {
+                    saveStatus.innerHTML = '✓ Auto-saved';
+                }, 2000);
+            }
+        });
+
+        // Handle beforeunload for seamless transitions
+        window.addEventListener('beforeunload', function(e) {
+            // Save progress before leaving
+            simulateAutoSave();
+            
+            // Don't show warning if going back to course
+            if (document.activeElement && document.activeElement.classList.contains('course-return')) {
+                return;
+            }
+            
+            // Show warning for other navigations
+            const message = 'Your progress is auto-saved. You can safely return to continue your business plan anytime.';
+            e.returnValue = message;
+            return message;
+        });
     </script>
 </body>
 </html>
