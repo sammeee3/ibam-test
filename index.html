@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IBAM System.io Integration Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+        }
+        .container {
+            background: white;
+            color: #333;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .info {
+            background: #e3f2fd;
+            border: 1px solid #bbdefb;
+            color: #0d47a1;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        .param {
+            background: #f8f9fa;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            border-left: 4px solid #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 IBAM System.io Integration Test</h1>
+        
+        <div class="success">
+            <h2>✅ SUCCESS! The link is working!</h2>
+            <p>If you can see this page, the basic linking from System.io is functioning.</p>
+        </div>
+
+        <h3>📊 System.io Data Received:</h3>
+        <div class="info">
+            <div class="param"><strong>User ID:</strong> <span id="userId">Not received</span></div>
+            <div class="param"><strong>Email:</strong> <span id="userEmail">Not received</span></div>
+            <div class="param"><strong>Name:</strong> <span id="userName">Not received</span></div>
+            <div class="param"><strong>Tags:</strong> <span id="userTags">Not received</span></div>
+            <div class="param"><strong>Full URL:</strong> <span id="fullUrl">Loading...</span></div>
+        </div>
+
+        <h3>🔧 Next Steps:</h3>
+        <div class="info">
+            <ol>
+                <li><strong>If you see data above:</strong> System.io URL parameters are working correctly</li>
+                <li><strong>If "Not received":</strong> We need to adjust the System.io link setup</li>
+                <li><strong>Once working:</strong> We can build the full business planner</li>
+            </ol>
+        </div>
+
+        <h3>📋 System.io Setup Instructions:</h3>
+        <div class="info">
+            <h4>For Button Link Method:</h4>
+            <p>In your System.io course, create a button with this URL:</p>
+            <code style="background: #f8f9fa; padding: 10px; display: block; margin: 10px 0; border-radius: 5px;">
+                [YOUR-WEBSITE-URL]?user={{contact.id}}&email={{contact.email}}&name={{contact.first_name}}&tags={{contact.tags}}
+            </code>
+            
+            <h4>For iframe Method:</h4>
+            <p>Add an HTML block with:</p>
+            <code style="background: #f8f9fa; padding: 10px; display: block; margin: 10px 0; border-radius: 5px;">
+                &lt;iframe src="[YOUR-WEBSITE-URL]?user={{contact.id}}&email={{contact.email}}&name={{contact.first_name}}&tags={{contact.tags}}" width="100%" height="600"&gt;&lt;/iframe&gt;
+            </code>
+        </div>
+    </div>
+
+    <script>
+        // Parse URL parameters
+        function getURLParams() {
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            // Display full URL
+            document.getElementById('fullUrl').textContent = window.location.href;
+            
+            // Check for common parameter variations
+            const userId = urlParams.get('user') || urlParams.get('user_id') || urlParams.get('contact_id');
+            const userEmail = urlParams.get('email') || urlParams.get('user_email');
+            const userName = urlParams.get('name') || urlParams.get('first_name') || urlParams.get('user_name');
+            const userTags = urlParams.get('tags') || urlParams.get('contact_tags');
+            
+            // Update display
+            document.getElementById('userId').textContent = userId || 'Not received';
+            document.getElementById('userEmail').textContent = userEmail || 'Not received';
+            document.getElementById('userName').textContent = userName || 'Not received';
+            document.getElementById('userTags').textContent = userTags || 'Not received';
+            
+            // Log all parameters for debugging
+            console.log('All URL Parameters:', Object.fromEntries(urlParams));
+        }
+        
+        // Run when page loads
+        document.addEventListener('DOMContentLoaded', getURLParams);
+    </script>
+</body>
+</html>
